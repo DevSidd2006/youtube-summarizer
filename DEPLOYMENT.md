@@ -11,13 +11,14 @@
 1. **Push to GitHub**: Ensure all your code is committed and pushed
 2. **Connect Repository**: Go to [share.streamlit.io](https://share.streamlit.io)
 3. **Deploy**: Select your repository and main branch
-4. **Entry Point**: Use `src/app.py` as your main file
-5. **Deploy**: Click "Deploy"
+4. **Entry Point**: Streamlit Cloud will automatically detect `streamlit_app.py`
+5. **Deploy**: Click "Deploy" (no manual file selection needed)
 
 ### Important Files for Deployment
 
 #### ✅ Required Files (Kept in Repository)
-- `src/app.py` - Main application entry point
+- `streamlit_app.py` - **Main entry point for Streamlit Cloud**
+- `src/app.py` - Core application logic
 - `src/app_fast.py` - Fast processing variant  
 - `src/app_ultra_fast.py` - Ultra-fast variant
 - `requirements.txt` - Python dependencies
@@ -65,9 +66,10 @@ https://[your-app-name]-[random-string].streamlit.app/
 ```bash
 # Test the exact deployment setup
 pip install -r requirements.txt
-streamlit run src/app.py
+streamlit run streamlit_app.py
 
-# Test different performance modes
+# Test different performance modes directly
+streamlit run src/app.py
 streamlit run src/app_fast.py
 streamlit run src/app_ultra_fast.py
 ```
@@ -75,8 +77,9 @@ streamlit run src/app_ultra_fast.py
 ### Repository Structure for Deployment
 ```
 youtube-summarizer/
+├── streamlit_app.py        # 🎯 MAIN ENTRY POINT (auto-detected)
 ├── src/
-│   ├── app.py              # 🎯 Main entry point
+│   ├── app.py              # 🚀 Core application logic
 │   ├── app_fast.py         # ⚡ Fast variant
 │   └── app_ultra_fast.py   # 🚀 Ultra-fast variant
 ├── requirements.txt        # 📦 Python dependencies

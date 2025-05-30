@@ -1,4 +1,6 @@
-# Python
+# ==============================================
+# Python Files - Standard ignores
+# ==============================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -21,7 +23,9 @@ wheels/
 *.egg
 MANIFEST
 
-# Virtual environments
+# ==============================================
+# Virtual Environments - Hide all
+# ==============================================
 .env
 .venv
 env/
@@ -29,15 +33,28 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+pipenv/
+poetry/
 
-# IDEs
+# ==============================================
+# Development Tools - Hide from production
+# ==============================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# OS
+# ==============================================
+# OS Files - Always ignore
+# ==============================================
 .DS_Store
 .DS_Store?
 ._*
@@ -45,20 +62,118 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Streamlit
-.streamlit/
+# ==============================================
+# Streamlit - Keep config but hide secrets
+# ==============================================
+.streamlit/secrets.toml
+# Note: config.toml is kept for deployment
 
-# Model cache
+# ==============================================
+# AI Models & Cache - Hide heavy files
+# ==============================================
 models/
+model_cache/
 *.model
 *.bin
+*.safetensors
+*.ggml
+*.gguf
+transformers_cache/
+huggingface_cache/
 
-# Logs
+# ==============================================
+# Development & Debug Files - Hide extras
+# ==============================================
 *.log
 logs/
+debug/
+debug_*.py
+test_*.py.bak
+temp_*.py
 
-# Temporary files
+# ==============================================
+# Temporary & Generated Files
+# ==============================================
 *.tmp
 *.temp
 temp/
+.temp/
+temp_audio/
+temp_video/
+temp_downloads/
+
+# ==============================================
+# Documentation Drafts - Keep only main README
+# ==============================================
+docs/
+docs/README.md
+docs/ENHANCEMENTS.md
+DEPLOYMENT.md
+HOW_IT_WORKS.md
+STREAMLIT_READY.md
+CLEANUP_SUMMARY.md
+GITHUB_STRUCTURE.md
+*.draft.md
+TODO.md
+NOTES.md
+dev_notes.txt
+
+# ==============================================
+# Development Scripts - Hide from production
+# ==============================================
+scripts/dev/
+dev_scripts/
+debug_*.py
+experiment_*.py
+test_manual.py
+
+# ==============================================
+# Large Files & Media - Prevent accidental upload
+# ==============================================
+*.mp4
+*.mp3
+*.wav
+*.avi
+*.mov
+*.mkv
+*.webm
+*.m4a
+*.flac
+
+# ==============================================
+# Environment & Secrets - Critical security
+# ==============================================
+.env.*
+config.local.py
+secrets.py
+api_keys.txt
+*.key
+*.pem
+.auth_token
+
+# ==============================================
+# Backup Files - Keep repository clean
+# ==============================================
+*.bak
+*.backup
+*~
+*.orig
+*.rej
+
+# ==============================================
+# Package Manager Files - Hide lock files
+# ==============================================
+Pipfile.lock
+poetry.lock
+yarn.lock
+package-lock.json
+
+# ==============================================
+# Cloud Platform Specific - Hide deployment configs
+# ==============================================
+.vercel/
+.netlify/
+.railway/
+fly.toml

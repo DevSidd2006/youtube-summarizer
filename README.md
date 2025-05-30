@@ -9,6 +9,13 @@ A powerful Streamlit application that summarizes YouTube videos using AI and pro
 - **Python 3.13 Compatible**: Includes compatibility fixes for the latest Python version
 - **Multiple Performance Modes**: Choose from standard, fast, and ultra-fast processing variants
 - **User-Friendly Interface**: Clean Streamlit web interface with progress tracking
+- **Cloud-Ready**: Optimized for Streamlit Community Cloud deployment
+
+## 🌐 Live Demo & Deployment
+
+**Deploy to Streamlit Cloud**: Ready for one-click deployment! See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+**Live Demo**: Deploy your own instance at [share.streamlit.io](https://share.streamlit.io)
 - **Robust Error Handling**: Comprehensive error management and fallback mechanisms
 
 ## 📋 Requirements
@@ -34,7 +41,14 @@ A powerful Streamlit application that summarizes YouTube videos using AI and pro
 
 3. **Start the application**:
    ```bash
-   streamlit run src/app.py
+   streamlit run streamlit_app.py
+   ```
+   
+   Or test different performance modes:
+   ```bash
+   streamlit run src/app.py          # Standard mode
+   streamlit run src/app_fast.py     # Fast mode (3-5x faster)
+   streamlit run src/app_ultra_fast.py  # Ultra-fast mode
    ```
 
 ### Manual Setup
@@ -57,12 +71,19 @@ A powerful Streamlit application that summarizes YouTube videos using AI and pro
 
 4. **Run the application**:
    ```bash
-   streamlit run src/app.py
+   streamlit run streamlit_app.py
+   ```
+   
+   Or test different performance modes:
+   ```bash
+   streamlit run src/app.py          # Standard mode
+   streamlit run src/app_fast.py     # Fast mode (3-5x faster)
+   streamlit run src/app_ultra_fast.py  # Ultra-fast mode
    ```
 
 ## 🎯 Usage
 
-1. **Launch the app**: Run `streamlit run src/app.py` in your terminal
+1. **Launch the app**: Run `streamlit run streamlit_app.py` in your terminal (or `streamlit run src/app.py` for direct access)
 2. **Enter YouTube URL**: Paste any YouTube video URL in the input field
 3. **Choose processing mode**: Select from available performance options
 4. **Get summary**: The app will download, process, and summarize the video
@@ -73,12 +94,17 @@ A powerful Streamlit application that summarizes YouTube videos using AI and pro
 ```
 youtube-summarizer/
 ├── .git/                   # Git repository
-├── .gitignore             # Git ignore rules
+├── .gitignore             # Git ignore rules  
 ├── README.md              # Project overview
+├── DEPLOYMENT.md          # Streamlit Cloud deployment guide
+├── streamlit_app.py       # **Main entry point for Streamlit Cloud**
 ├── setup.py               # Quick setup script
-├── requirements.txt       # Dependencies
+├── requirements.txt       # Python dependencies
+├── packages.txt           # System dependencies (for Streamlit Cloud)
+├── .streamlit/
+│   └── config.toml        # Streamlit configuration
 ├── src/
-│   ├── app.py             # Main application
+│   ├── app.py             # Core application logic
 │   ├── app_fast.py        # Fast processing variant
 │   └── app_ultra_fast.py  # Ultra-fast variant
 ├── tests/
