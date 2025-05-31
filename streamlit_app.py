@@ -56,7 +56,6 @@ if 'cgi' not in sys.modules:
 
 # Now safe to import everything else
 from youtube_transcript_api import YouTubeTranscriptApi
-from transformers import pipeline
 import nltk
 from nltk.tokenize import sent_tokenize
 import streamlit as st
@@ -82,23 +81,52 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
+# Check if running on Streamlit Cloud
+IS_STREAMLIT_CLOUD = os.getenv('STREAMLIT_SHARING') or os.getenv('STREAMLIT_CLOUD_MODE') or 'streamlit.io' in os.getenv('HOSTNAME', '')
+
+# AI/ML Dependencies - Make optional for cloud deployment
+AI_TRANSCRIPTION_AVAILABLE = False
+TRANSFORMERS_AVAILABLE = False
+WHISPER_AVAILABLE = False
+WHISPER_TYPE = None
+
+# Try to import transformers (with cloud deployment safety)
 try:
-    import speech_recognition as sr
-    from pytube import YouTube
-    from pydub import AudioSegment
-    AI_TRANSCRIPTION_AVAILABLE = True
-    WHISPER_AVAILABLE = False
-    
-    # Try to import faster-whisper (more stable alternative)
-    try:
-        from faster_whisper import WhisperModel
-        WHISPER_AVAILABLE = True
-        WHISPER_TYPE = "faster"
-        print("✅ faster-whisper loaded successfully")
-    except ImportError as whisper_error:
-        print(f"⚠️ faster-whisper import failed: {whisper_error}")
-        WHISPER_AVAILABLE = False
-        WHISPER_TYPE = None
+    if not IS_STREAMLIT_CLOUD:  # Only load on local development
+        from transformers import pipeline
+        TRANSFORMERS_AVAILABLE = True
+        print("✅ transformers loaded successfully")
+    else:
+        print("⚠️ Skipping transformers on Streamlit Cloud to prevent PyTorch conflicts")
+        TRANSFORMERS_AVAILABLE = False
+except ImportError as transform_error:
+    print(f"⚠️ transformers import failed: {transform_error}")
+    TRANSFORMERS_AVAILABLE = False
+except Exception as e:
+    print(f"⚠️ transformers loading error: {e}")
+    TRANSFORMERS_AVAILABLE = False
+
+# Try to import AI transcription dependencies (optional for cloud)
+try:
+    if not IS_STREAMLIT_CLOUD:  # Only load on local development
+        import speech_recognition as sr
+        from pytube import YouTube
+        from pydub import AudioSegment
+        AI_TRANSCRIPTION_AVAILABLE = True
+        
+        # Try to import faster-whisper (more stable alternative)
+        try:
+            from faster_whisper import WhisperModel
+            WHISPER_AVAILABLE = True
+            WHISPER_TYPE = "faster"
+            print("✅ faster-whisper loaded successfully")
+        except ImportError as whisper_error:
+            print(f"⚠️ faster-whisper import failed: {whisper_error}")
+            WHISPER_AVAILABLE = False
+            WHISPER_TYPE = None
+    else:
+        print("⚠️ Skipping AI transcription imports on Streamlit Cloud")
+        AI_TRANSCRIPTION_AVAILABLE = False
         print("To enable AI transcription, install with: pip install faster-whisper")
         
 except ImportError as e:
@@ -145,20 +173,39 @@ except:
 @st.cache_resource
 def load_summarizer():
     """Load and cache the OPTIMIZED summarization model for better speed"""
+    if not TRANSFORMERS_AVAILABLE:
+        st.warning("⚠️ Transformers not available - summarization disabled for cloud deployment")
+        return None
+    
     # Use faster, smaller model instead of bart-large-cnn for better performance
     try:
+        from transformers import pipeline
         return pipeline("summarization", model="sshleifer/distilbart-cnn-6-6", device=-1)
-    except:
-        # Fallback to even smaller model
-        return pipeline("summarization", model="t5-small", device=-1)
+    except Exception as e:
+        st.warning(f"⚠️ Failed to load primary summarization model: {e}")
+        try:
+            # Fallback to even smaller model
+            return pipeline("summarization", model="t5-small", device=-1)
+        except Exception as e2:
+            st.error(f"❌ All summarization models failed to load: {e2}")
+            return None
 
 @st.cache_resource  
 def load_sentiment_analyzer():
     """Load and cache OPTIMIZED sentiment analysis model"""
-    # Use a more efficient model
-    return pipeline("sentiment-analysis", 
-                   model="cardiffnlp/twitter-roberta-base-sentiment-latest",
-                   device=-1)
+    if not TRANSFORMERS_AVAILABLE:
+        st.warning("⚠️ Transformers not available - sentiment analysis disabled for cloud deployment")
+        return None
+    
+    try:
+        from transformers import pipeline
+        # Use a more efficient model
+        return pipeline("sentiment-analysis", 
+                       model="cardiffnlp/twitter-roberta-base-sentiment-latest",
+                       device=-1)
+    except Exception as e:
+        st.warning(f"⚠️ Failed to load sentiment analysis model: {e}")
+        return None
 
 @st.cache_resource
 def load_whisper_model():
@@ -1661,6 +1708,10 @@ def analyze_sentiment_timeline(transcript_data):
     """Analyze sentiment changes throughout the video"""
     sentiment_analyzer = load_sentiment_analyzer()
     
+    # If no sentiment analyzer available (cloud deployment), use fallback
+    if sentiment_analyzer is None:
+        return generate_fallback_sentiment(transcript_data)
+    
     if isinstance(transcript_data, str):
         return [{'timestamp': '00:00', 'sentiment': 'NEUTRAL', 'score': 0.0}]
     
@@ -1687,6 +1738,45 @@ def analyze_sentiment_timeline(transcript_data):
                     'score': 0.0,
                     'text_sample': text[:100] + "..."
                 })
+    
+    return sentiment_timeline
+
+def generate_fallback_sentiment(transcript_data):
+    """Fallback sentiment analysis using simple keyword-based approach"""
+    if isinstance(transcript_data, str):
+        return [{'timestamp': '00:00', 'sentiment': 'NEUTRAL', 'score': 0.0}]
+    
+    # Simple sentiment keywords
+    positive_words = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'like', 'enjoy', 'happy', 'excited', 'awesome', 'perfect', 'best', 'brilliant']
+    negative_words = ['bad', 'terrible', 'awful', 'horrible', 'hate', 'dislike', 'sad', 'angry', 'disappointed', 'worst', 'problem', 'issue', 'difficult', 'hard', 'struggle']
+    
+    sentiment_timeline = []
+    segment_duration = 60  # 1-minute segments
+    
+    segments = create_timeline_segments(transcript_data, segment_duration)
+    
+    for segment in segments:
+        text = segment['text'].lower()
+        if len(text.strip()) > 20:
+            positive_count = sum(1 for word in positive_words if word in text)
+            negative_count = sum(1 for word in negative_words if word in text)
+            
+            if positive_count > negative_count:
+                sentiment = 'POSITIVE'
+                score = min(0.9, 0.5 + (positive_count - negative_count) * 0.1)
+            elif negative_count > positive_count:
+                sentiment = 'NEGATIVE'
+                score = min(0.9, 0.5 + (negative_count - positive_count) * 0.1)
+            else:
+                sentiment = 'NEUTRAL'
+                score = 0.5
+            
+            sentiment_timeline.append({
+                'timestamp': segment['timestamp'],
+                'sentiment': sentiment,
+                'score': score,
+                'text_sample': text[:100] + "..."
+            })
     
     return sentiment_timeline
 
@@ -2075,6 +2165,10 @@ def generate_summary(text, is_long_form=False):
     try:
         summarizer = load_summarizer()  # Use cached model
         
+        # If no summarizer available (cloud deployment), use fallback method
+        if summarizer is None:
+            return generate_fallback_summary(text)
+        
         # Clean and preprocess the text
         text = text.strip()
         if not text:
@@ -2136,6 +2230,73 @@ def generate_summary(text, is_long_form=False):
         
     except Exception as e:
         return f"Error generating summary: {str(e)}"
+
+def generate_fallback_summary(text):
+    """Fallback summarization method when AI models are not available (cloud deployment)"""
+    try:
+        # Clean and preprocess text
+        text = text.strip()
+        if not text:
+            return "No text to summarize."
+        
+        sentences = sent_tokenize(text)
+        if len(sentences) <= 3:
+            return text
+        
+        # Extract key sentences using simple heuristics
+        sentence_scores = []
+        word_freq = {}
+        
+        # Calculate word frequencies
+        words = text.lower().split()
+        for word in words:
+            word = re.sub(r'[^\w\s]', '', word)
+            if len(word) > 3 and word not in ['this', 'that', 'with', 'have', 'will', 'from', 'they', 'been', 'were', 'said']:
+                word_freq[word] = word_freq.get(word, 0) + 1
+        
+        # Score sentences based on word frequency
+        for i, sentence in enumerate(sentences):
+            sentence_words = sentence.lower().split()
+            score = 0
+            word_count = 0
+            
+            for word in sentence_words:
+                word = re.sub(r'[^\w\s]', '', word)
+                if word in word_freq:
+                    score += word_freq[word]
+                    word_count += 1
+            
+            if word_count > 0:
+                # Position bonus for sentences at beginning and end
+                position_bonus = 1.0
+                if i < len(sentences) * 0.1:  # First 10%
+                    position_bonus = 1.2
+                elif i > len(sentences) * 0.9:  # Last 10%
+                    position_bonus = 1.1
+                
+                avg_score = (score / word_count) * position_bonus
+                sentence_scores.append((i, sentence, avg_score))
+        
+        # Sort by score and select top sentences
+        sentence_scores.sort(key=lambda x: x[2], reverse=True)
+        
+        # Select top 30% of sentences or minimum 3 sentences
+        num_sentences = max(3, min(len(sentences) // 3, 10))
+        selected_sentences = sentence_scores[:num_sentences]
+        
+        # Sort selected sentences by original order
+        selected_sentences.sort(key=lambda x: x[0])
+        
+        # Create summary
+        summary = " ".join([s[1] for s in selected_sentences])
+        
+        # Add a note about the summarization method
+        summary = "📝 **Cloud Summary** (Extractive): " + summary
+        
+        return summary if summary else "Unable to generate summary."
+    
+    except Exception as e:
+        return f"Error in fallback summarization: {str(e)}"
 
 def generate_standard_summary(chunks, summarizer):
     """Generate summary for regular length content"""
@@ -2262,11 +2423,19 @@ def main():
     st.title("🚀 Enhanced YouTube Video Analyzer & Summarizer")
     st.markdown("*AI-powered analysis with advanced subtitle enhancement and AI transcription fallback*")
 
+    # Cloud deployment notification
+    if IS_STREAMLIT_CLOUD:
+        st.info("☁️ **Running on Streamlit Cloud** - AI transcription and advanced ML features are disabled to ensure stable deployment. The app will focus on subtitle-based analysis.")
+        st.info("💡 **Available Features**: YouTube transcript extraction, Hindi translation, basic summarization, and content analysis.")
+    
     # Display AI transcription availability
     if AI_TRANSCRIPTION_AVAILABLE:
         st.success("✅ AI Transcription Available")
     else:
-        st.warning("⚠️ AI Transcription Not Available - Install with: `pip install openai-whisper pytube pydub SpeechRecognition`")
+        if not IS_STREAMLIT_CLOUD:
+            st.warning("⚠️ AI Transcription Not Available - Install with: `pip install openai-whisper pytube pydub SpeechRecognition`")
+        else:
+            st.info("🔍 **Cloud Mode**: Using subtitle-based processing for optimal performance")
 
     # Sidebar for settings
     with st.sidebar:

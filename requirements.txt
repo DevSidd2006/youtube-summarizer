@@ -6,34 +6,24 @@ requests>=2.31.0
 beautifulsoup4>=4.12.2
 
 # ==============================================
-# YouTube & Video Processing
+# YouTube & Video Processing - Core
 # ==============================================
 youtube-transcript-api>=0.6.1
 yt-dlp>=2023.10.13
-pytube>=15.0.0
-pydub>=0.25.1
 
 # ==============================================
-# AI/ML Libraries - Core functionality
+# Text Processing - Essential
 # ==============================================
-transformers>=4.35.2
-torch>=2.1.1
 nltk>=3.8.1
 
 # ==============================================
-# Audio Processing - Optional but recommended
-# ==============================================
-SpeechRecognition>=3.10.0
-faster-whisper>=0.10.0
-
-# ==============================================
-# Translation Services
+# Translation Services - Core functionality
 # ==============================================
 googletrans>=3.4.0
 deep-translator>=1.8.0
 
 # ==============================================
-# Data Visualization & Analysis
+# Data Visualization & Analysis - Core
 # ==============================================
 pandas>=2.1.3
 plotly>=5.17.0
@@ -41,3 +31,14 @@ matplotlib>=3.8.2
 seaborn>=0.13.0
 networkx>=3.2.1
 wordcloud>=1.9.2
+
+# ==============================================
+# Optional Dependencies (for local development)
+# Comment out for Streamlit Cloud deployment
+# ==============================================
+# transformers>=4.35.2
+# torch>=2.1.1
+# pytube>=15.0.0
+# pydub>=0.25.1
+# SpeechRecognition>=3.10.0
+# faster-whisper>=0.10.0
