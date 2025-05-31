@@ -49,6 +49,37 @@ poetry/
 htmlcov/
 .tox/
 .mypy_cache/
+
+# ==============================================
+# Project-Specific Test/Debug Files to Ignore
+# ==============================================
+# Test files created during development
+test_*.py
+*_test.py
+verify_*.py
+benchmark_*.py
+fix_*.py
+launch_*.py
+
+# Documentation files from development process
+*_SUMMARY.md
+*_COMPLETED*.md
+*_FINAL*.md
+FIX_*.md
+CLEANUP_*.md
+DEPLOYMENT.md
+GITHUB_STRUCTURE.md
+STREAMLIT_READY.md
+
+# Alternative app versions
+streamlit_app1.py
+app_*.py
+src/app_*.py
+
+# Temporary and backup files
+*.bak
+*.tmp
+*.log
 .dmypy.json
 dmypy.json
 
@@ -119,6 +150,12 @@ GITHUB_STRUCTURE.md
 TODO.md
 NOTES.md
 dev_notes.txt
+FINAL_COMPLETION_REPORT.md
+DEPLOYMENT.md
+CLEANUP_SUMMARY.md
+README_CLEAN.md
+README_FIXED.md
+
 
 # ==============================================
 # Development Scripts - Hide from production

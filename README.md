@@ -1,190 +1,138 @@
-# YouTube Video Summarizer
+# 🎬 YouTube Summarizer
 
-A powerful Streamlit application that summarizes YouTube videos using AI and provides translations in Hindi with Python 3.13 compatibility.
+A powerful Streamlit application that automatically summarizes YouTube videos with AI-powered transcription and intelligent multilingual support.
 
-## 🚀 Features
+## ✨ Features
 
-- **AI-Powered Summaries**: Extract key insights from YouTube videos using advanced transformer models
-- **Hindi Translation**: Automatic translation to Hindi with robust error handling
-- **Python 3.13 Compatible**: Includes compatibility fixes for the latest Python version
-- **Multiple Performance Modes**: Choose from standard, fast, and ultra-fast processing variants
-- **User-Friendly Interface**: Clean Streamlit web interface with progress tracking
-- **Cloud-Ready**: Optimized for Streamlit Community Cloud deployment
+- **🎯 Smart Video Processing**: Automatically extracts and processes YouTube video content
+- **🌍 Multilingual Support**: Intelligent handling of English and Hindi content
+- **🤖 AI-Powered Transcription**: Advanced speech recognition for accurate transcripts
+- **📊 Intelligent Summarization**: Generates concise, meaningful summaries
+- **🚀 Optimized Performance**: Smart language detection prevents unnecessary processing
+- **🎨 Modern Interface**: Clean, intuitive Streamlit web application
 
-## 🌐 Live Demo & Deployment
+## 🚀 Quick Start
 
-**Deploy to Streamlit Cloud**: Ready for one-click deployment! See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
-
-**Live Demo**: Deploy your own instance at [share.streamlit.io](https://share.streamlit.io)
-- **Robust Error Handling**: Comprehensive error management and fallback mechanisms
-
-## 📋 Requirements
-
+### Prerequisites
 - Python 3.8+ (including Python 3.13)
-- Internet connection for video download and translation
-- Sufficient RAM for AI model processing (recommended: 4GB+)
+- Internet connection for YouTube access
 
-## 🛠️ Installation
+### Installation
 
-### Quick Setup (Recommended)
-
-1. **Clone the repository**:
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/DevSidd2006/Link-Bypass.git
-   cd Link-Bypass
+   git clone https://github.com/your-username/youtube-summarizer.git
+   cd youtube-summarizer
    ```
 
-2. **Run the setup script**:
-   ```bash
-   python setup.py
-   ```
-
-3. **Start the application**:
-   ```bash
-   streamlit run streamlit_app.py
-   ```
-   
-   Or test different performance modes:
-   ```bash
-   streamlit run src/app.py          # Standard mode
-   streamlit run src/app_fast.py     # Fast mode (3-5x faster)
-   streamlit run src/app_ultra_fast.py  # Ultra-fast mode
-   ```
-
-### Manual Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/DevSidd2006/Link-Bypass.git
-   cd Link-Bypass
-   ```
-
-2. **Install dependencies**:
+2. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Run tests** (optional):
+3. **Run the application**
+   
+   **Option A: Use the launcher (Windows)**
    ```bash
-   python tests/test_app.py
+   start_app.bat
    ```
-
-4. **Run the application**:
+   
+   **Option B: Direct command**
    ```bash
    streamlit run streamlit_app.py
    ```
-   
-   Or test different performance modes:
-   ```bash
-   streamlit run src/app.py          # Standard mode
-   streamlit run src/app_fast.py     # Fast mode (3-5x faster)
-   streamlit run src/app_ultra_fast.py  # Ultra-fast mode
-   ```
 
-## 🎯 Usage
+4. **Open your browser**
+   - Navigate to `http://localhost:8501`
+   - Paste any YouTube URL and start summarizing!
 
-1. **Launch the app**: Run `streamlit run streamlit_app.py` in your terminal (or `streamlit run src/app.py` for direct access)
-2. **Enter YouTube URL**: Paste any YouTube video URL in the input field
-3. **Choose processing mode**: Select from available performance options
-4. **Get summary**: The app will download, process, and summarize the video
-5. **Hindi translation**: Automatic translation will be provided with the summary
+## 🔧 How It Works
+
+1. **📥 Video Input**: Paste any YouTube URL
+2. **🔍 Content Analysis**: Extracts video metadata and available transcripts
+3. **🧠 Language Detection**: Automatically detects content language (English/Hindi)
+4. **📝 Transcription**: Uses AI transcription for videos without existing subtitles
+5. **⚡ Smart Processing**: Applies optimized processing based on detected language
+6. **📊 Summarization**: Generates structured, concise summaries
 
 ## 📁 Project Structure
 
 ```
 youtube-summarizer/
-├── .git/                   # Git repository
-├── .gitignore             # Git ignore rules  
-├── README.md              # Project overview
-├── DEPLOYMENT.md          # Streamlit Cloud deployment guide
-├── streamlit_app.py       # **Main entry point for Streamlit Cloud**
-├── setup.py               # Quick setup script
-├── requirements.txt       # Python dependencies
-├── packages.txt           # System dependencies (for Streamlit Cloud)
-├── .streamlit/
-│   └── config.toml        # Streamlit configuration
-├── src/
-│   ├── app.py             # Core application logic
-│   ├── app_fast.py        # Fast processing variant
-│   └── app_ultra_fast.py  # Ultra-fast variant
-├── tests/
-│   └── test_app.py        # Comprehensive test suite
-└── docs/
-    ├── README.md          # Detailed documentation
-    └── ENHANCEMENTS.md    # Feature specifications
+├── streamlit_app.py      # Main application
+├── requirements.txt      # Python dependencies
+├── start_app.bat        # Windows launcher
+├── README.md            # Project documentation
+├── .gitignore           # Git ignore rules
+└── docs/                # Additional documentation
 ```
 
-## 🔧 Technical Features
+## 🌟 Key Features
 
-### Python 3.13 Compatibility
-- **CGI Module Fix**: Includes compatibility layer for Python 3.13 where `cgi` module was removed
-- **Session State Management**: Optimized translator initialization to prevent repeated warnings
-- **Enhanced Error Handling**: Comprehensive error categorization with user-friendly messages
+### Intelligent Language Processing
+- **English Content**: Direct processing without unnecessary translation overhead
+- **Hindi Content**: Full translation and processing pipeline when needed
+- **Smart Detection**: Automatic language identification prevents redundant operations
 
-### Performance Variants
-- **Standard Mode** (`app.py`): Full-featured processing with all optimizations
-- **Fast Mode** (`app_fast.py`): 3-5x faster processing with DistilBART model
-- **Ultra-Fast Mode** (`app_ultra_fast.py`): Maximum speed with minimal memory usage
+### Performance Optimizations
+- **Early Language Detection**: Skips unnecessary processing steps
+- **Efficient Transcript Extraction**: Multiple fallback methods for reliability
+- **Optimized AI Usage**: Smart model selection based on content type
 
-### Translation Features
-- **Primary**: Google Translate with timeout handling
-- **Fallback**: Deep Translator for enhanced reliability
-- **Error Recovery**: Automatic fallback switching and detailed error guidance
+## 🛠️ Configuration
 
-## 🧪 Testing
+The application works out-of-the-box with sensible defaults. For customization:
 
-Run the comprehensive test suite:
-
-```bash
-python tests/test_app.py
-```
-
-The test suite verifies:
-- Python 3.13 CGI compatibility
-- Translation functionality
-- Package imports and dependencies
+- **Port Configuration**: Modify port in `start_app.bat` or use `--server.port` flag
+- **Processing Settings**: Configure AI and translation settings through the web interface
 
 ## 🔍 Troubleshooting
 
-### Common Issues
+### Common Solutions
 
-1. **"Translator initialization test failed" warnings**:
-   - Fixed in this version with session state optimization
-   - The translator is tested only once per session
+**Installation Issues**
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-2. **Python 3.13 compatibility errors**:
-   - Includes automatic CGI module compatibility layer
-   - No manual intervention required
+**Port Already in Use**
+```bash
+streamlit run streamlit_app.py --server.port 8502
+```
 
-3. **Translation failures**:
-   - Automatic fallback to alternative translation service
-   - Network connectivity and rate limit handling included
-
-4. **Performance issues**:
-   - Use `app_fast.py` or `app_ultra_fast.py` for better performance
-   - Check system RAM availability (4GB+ recommended)
+**Python Compatibility**
+- Supports Python 3.8+ including Python 3.13
+- Use virtual environment for clean dependency management
 
 ## 📚 Documentation
 
-For detailed documentation, see:
+For detailed information:
 - [docs/README.md](docs/README.md) - Complete user guide
-- [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md) - Feature specifications and optimization details
+- [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md) - Technical specifications
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Run tests: `python tests/test_app.py`
-5. Submit a pull request
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- **Transformers**: Hugging Face transformers library for AI processing
-- **Streamlit**: Modern web app framework
-- **yt-dlp**: YouTube video download capabilities
-- **GoogleTrans**: Translation services
+- **Streamlit** - Modern web app framework
+- **Hugging Face Transformers** - AI processing capabilities
+- **yt-dlp** - YouTube video processing
+- **OpenAI Whisper** - Speech recognition technology
+
+---
+
+**⭐ If you find this project helpful, please give it a star on GitHub!**
+
+**Made with ❤️ for the open source community**
